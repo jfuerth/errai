@@ -182,7 +182,13 @@
             <version>4.8.1</version>
         </dependency>
 
-
+        <dependency>
+          <groupId>org.jboss.perfrunner</groupId>
+          <artifactId>junit-4-perfrunner</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>test</scope>
+        </dependency>
+        
         <!-- GAE -->
         <dependency>
             <groupId>com.google.appengine</groupId>
