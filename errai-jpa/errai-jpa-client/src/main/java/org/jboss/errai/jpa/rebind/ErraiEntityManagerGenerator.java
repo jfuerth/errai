@@ -87,6 +87,7 @@ import org.jboss.errai.jpa.client.local.ErraiEntityType;
 import org.jboss.errai.jpa.client.local.ErraiPluralAttribute;
 import org.jboss.errai.jpa.client.local.ErraiSingularAttribute;
 import org.jboss.errai.jpa.client.local.IntIdGenerator;
+import org.jboss.errai.jpa.client.local.JsonUtil;
 import org.jboss.errai.jpa.client.local.LongIdGenerator;
 
 import com.google.gwt.core.ext.Generator;
@@ -427,14 +428,24 @@ public class ErraiEntityManagerGenerator extends Generator {
         return Stmt.loadVariable(entitySnapshotVarName(et.getJavaType())).returnValue();
       }
 
-      // provide get method
+      // provide get method for Java objects
       if (sourceObject instanceof Attribute && method.getName().equals("get")) {
         return generateAttributeGetMethod(method, sourceObject, containingClassBuilder);
       }
 
-      // provide set method
+      // provide set method for Java objects
       if (sourceObject instanceof Attribute && method.getName().equals("set")) {
         return generateAttributeSetMethod(method, sourceObject);
+      }
+
+      // provide get method for JSON value
+      if (sourceObject instanceof SingularAttribute && method.getName().equals("fromJson")) {
+        return generateFromJsonMethod(method, sourceObject);
+      }
+
+      // provide set method for JSON value
+      if (sourceObject instanceof SingularAttribute && method.getName().equals("toJson")) {
+        return generateToJsonMethod(method, sourceObject);
       }
 
       // provide indication of generated value annotation
@@ -473,6 +484,25 @@ public class ErraiEntityManagerGenerator extends Generator {
 
       // allow SnapshotMaker default (read value and create snapshot)
       return null;
+    }
+
+    private Statement generateFromJsonMethod(MetaMethod method, Object sourceObject) {
+      SingularAttribute<?, ?> attr = (SingularAttribute<?, ?>) sourceObject;
+
+      String jsonValueParam = method.getParameters()[0].getName();
+
+      Statement convertToJava = Stmt.invokeStatic(JsonUtil.class, "basicValueFromJson", Stmt.loadVariable(jsonValueParam), attr.getJavaType());
+
+      if (attr.getJavaType().isPrimitive()) {
+        return Stmt.nestedCall(convertToJava).returnValue();
+      }
+      else {
+        // non-primitive types need a null check before attempting conversion
+        Stmt.if_(Bool.isNotNull(Stmt.loadVariable(jsonValueParam).invoke("isNull")))
+        ._(Stmt.loadLiteral(null).returnValue()).finish()
+        .else_()
+        ._(Stmt.nestedCall(convertToJava).returnValue()).finish();
+      }
     }
 
     private Statement generateCreateEmptyCollectionMethod(Object sourceObject) {

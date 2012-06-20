@@ -166,9 +166,9 @@ public class TypedQueryFactoryGenerator {
       DotNode dotNode = (DotNode) ast;
       traverser.fastForwardToNextSiblingOf(dotNode);
       // FIXME this assumes the property reference is to the candidate entity instance (it could be to another type)
-      return Stmt.invokeStatic(JsonUtil.class, "basicValueFromJson",
-              Stmt.loadVariable("candidate").invoke("get", dotNode.getPropertyPath()),
-              dotNode.getDataType().getReturnedClass());
+
+      TODO change to generate "attribute.fromJson(candidate.get(property))" -- need a way of obtaining the ErraiSingularAttribute instance
+      return Stmt.loadVariable("candidate").invoke("get", dotNode.getPropertyPath()).invoke("isString").invoke("stringValue");
     case HqlSqlTokenTypes.NAMED_PARAM:
       ParameterNode paramNode = (ParameterNode) ast;
       NamedParameterSpecification namedParamSpec = (NamedParameterSpecification) paramNode.getHqlParameterSpecification();
