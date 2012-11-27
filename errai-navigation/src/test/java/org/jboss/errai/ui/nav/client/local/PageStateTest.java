@@ -171,7 +171,7 @@ public class PageStateTest extends AbstractErraiCDITest {
 
     // finally, ensure getState() properly reconstitutes the map we started with
     PageNode<PageWithExtraState> pageNode = navigation.getNavGraph().getPage(PageWithExtraState.class);
-    Multimap<String, String> refetchedState = pageNode.getState(page);
+    Multimap<String, String> refetchedState = pageNode.pageHiding(page);
     Multimap<String, String> expectedState = ArrayListMultimap.create(stateValues);
 
     // the set loses an entry during conversion (that's correct behaviour); test it separately
@@ -208,7 +208,7 @@ public class PageStateTest extends AbstractErraiCDITest {
 
     NavigationGraph navGraph = navigation.getNavGraph();
     PageNode<PageWithExtraState> pageNode = navGraph.getPage(PageWithExtraState.class);
-    Multimap<String, String> state = pageNode.getState(page);
+    Multimap<String, String> state = pageNode.pageHiding(page);
     assertTrue("Default state map should only contain the primitives, but was: " + state,
             state.keySet().equals(ImmutableSet.of(
                     "byteThing", "shortThing", "intThing", "longThing", "floatThing", "doubleThing", "boolThing")));
