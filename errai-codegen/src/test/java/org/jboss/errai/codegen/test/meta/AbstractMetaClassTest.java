@@ -530,6 +530,10 @@ public abstract class AbstractMetaClassTest {
     assertEquals("Should have no upper bound",
             Arrays.asList(getMetaClass(Object.class)),
             Arrays.asList(typeVar.getBounds()));
+
+    // TODO GWT impl fails here. must find a way to implement in GWT.
+    assertEquals("this variable was declared on ClassWithGenericCollections",
+            metaClass, typeVar.getGenericDeclaration());
   }
 
   @Test

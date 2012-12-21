@@ -32,8 +32,9 @@ public interface MetaTypeVariable extends MetaType {
    */
   public MetaType[] getBounds();
 
-  // note: Java's TypeVariable interface has a getGenericDeclaration() method that returns the
-  // class, method, or constructor where the type variable was declared. Unfortunately, this
-  // information is not available from GWT's type system.
+  /**
+   * Returns the class, constructor, or method where this type variable was declared.
+   */
+  public MetaGenericDeclaration getGenericDeclaration();
 
 }

@@ -16,6 +16,7 @@
 
 package org.jboss.errai.codegen.meta.impl.gwt;
 
+import org.jboss.errai.codegen.meta.MetaGenericDeclaration;
 import org.jboss.errai.codegen.meta.MetaType;
 import org.jboss.errai.codegen.meta.MetaTypeVariable;
 
@@ -37,6 +38,11 @@ public class GWTTypeVariable implements MetaTypeVariable {
   @Override
   public MetaType[] getBounds() {
     return GWTUtil.fromTypeArray(oracle, typeParameter.getBounds());
+  }
+
+  @Override
+  public MetaGenericDeclaration getGenericDeclaration() {
+    throw new UnsupportedOperationException("GWT reflection does not provide this information.");
   }
 
   @Override

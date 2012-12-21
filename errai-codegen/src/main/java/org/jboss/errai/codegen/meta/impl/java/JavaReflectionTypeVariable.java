@@ -16,8 +16,13 @@
 
 package org.jboss.errai.codegen.meta.impl.java;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.Method;
 import java.lang.reflect.TypeVariable;
 
+import org.jboss.errai.codegen.meta.MetaClassFactory;
+import org.jboss.errai.codegen.meta.MetaGenericDeclaration;
 import org.jboss.errai.codegen.meta.MetaType;
 import org.jboss.errai.codegen.meta.MetaTypeVariable;
 
@@ -29,9 +34,25 @@ import org.jboss.errai.codegen.meta.MetaTypeVariable;
  */
 public class JavaReflectionTypeVariable implements MetaTypeVariable {
   private final TypeVariable<?> variable;
+  private final MetaGenericDeclaration declaration;
 
   public JavaReflectionTypeVariable(final TypeVariable<?> variable) {
     this.variable = variable;
+
+    // TODO return the MetaClass, MetaConstructor, or MetaMethod where this variable was declared
+    GenericDeclaration genericDeclaration = variable.getGenericDeclaration();
+    if (genericDeclaration instanceof Class) {
+      this.declaration = MetaClassFactory.get((Class<?>) genericDeclaration);
+    }
+    else if (genericDeclaration instanceof Method) {
+      this.declaration = MetaClassFactory.get((Method) genericDeclaration);
+    }
+    else if (genericDeclaration instanceof Method) {
+      this.declaration = new JavaReflectionConstructor((Constructor<?>) genericDeclaration);
+    }
+    else {
+      throw new RuntimeException("Generic declaration was of an unexpected type: " + genericDeclaration.getClass());
+    }
   }
 
   @Override
@@ -42,5 +63,10 @@ public class JavaReflectionTypeVariable implements MetaTypeVariable {
   @Override
   public String getName() {
     return variable.getName();
+  }
+
+  @Override
+  public MetaGenericDeclaration getGenericDeclaration() {
+    return declaration;
   }
 }
