@@ -57,6 +57,10 @@ class ErraiPersistenceUnitInfo implements PersistenceUnitInfo {
     return Collections.emptyList();
   }
 
+  /**
+   * Returns null, which prevents hibernate from scanning for entities outside
+   * of GWT modules. See ERRAI-675 for details.
+   */
   @Override
   public URL getPersistenceUnitRootUrl() {
     return null;

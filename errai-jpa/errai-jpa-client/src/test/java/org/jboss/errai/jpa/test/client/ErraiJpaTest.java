@@ -40,6 +40,7 @@ import org.jboss.errai.jpa.test.entity.Genre;
 import org.jboss.errai.jpa.test.entity.MethodAccessedZentity;
 import org.jboss.errai.jpa.test.entity.StandaloneLifecycleListener;
 import org.jboss.errai.jpa.test.entity.Zentity;
+import org.jboss.errai.jpa.test.not.on.gwt.path.NonClientEntity;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -102,6 +103,21 @@ public class ErraiJpaTest extends JpaClientTestCase {
       em.persist("this is a string, not an entity");
       fail();
     } catch (IllegalArgumentException ex) {
+      // this is the behaviour we are testing for
+    }
+  }
+
+  /**
+   * Regression check for ERRAI-675.
+   */
+  public void testNonClientEntityIsNotInEntityManager() {
+    try {
+      getEntityManager().getMetamodel().entity(NonClientEntity.class);
+
+      // it's actually more likely that the whole code generation thing fails
+      fail("NonClientEntity was included");
+    }
+    catch (IllegalArgumentException ex) {
       // this is the behaviour we are testing for
     }
   }
